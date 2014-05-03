@@ -6,6 +6,18 @@ use strict;
 
 my $ua = LWP::UserAgent->new;
 
+sub get_json {
+  my $resp = shift;
+  my $method = shift;
+  #warn "raw response: ".$resp->decoded_content;
+  warn "$method: www: ".$resp->status_line
+    unless $resp->is_success;
+  my $json = decode_json($resp->decoded_content);
+  die "$method: api: method call failed: ".$json->{msg}
+    unless $json->{success};
+  return $json;
+}
+
 my %auth_request = (
   app_id => "fr.itix.munin",
   app_name => "Munin",
@@ -14,25 +26,21 @@ my %auth_request = (
 );
 
 my $auth_response = $ua->post("http://mafreebox.freebox.fr/api/v1/login/authorize", Content => encode_json(\%auth_request));
-
-die "post: authorize: ".$auth_response->status_line
-  unless $auth_response->is_success;
-
-my $json_auth_response = decode_json($auth_response->decoded_content);
+my $json_auth_response = get_json($auth_response, "authorize");
 my $trackid = $json_auth_response->{result}->{track_id};
 die "post: authorize: no trackid in response" 
   unless defined $trackid;
 
 my $apptoken = $json_auth_response->{result}->{app_token};
 print "APPTOKEN is '",$apptoken,"'\n";
+print "\nNow you have to approve that apptoken on the Freebox front display !!!\n\n";
 
+my $count = 1;
 do {
   $auth_response = $ua->get("http://mafreebox.freebox.fr/api/v1/login/authorize/$trackid");
-  die "post: authorize: ".$auth_response->status_line
-    unless $auth_response->is_success;
-  $json_auth_response = decode_json($auth_response->decoded_content);
+  $json_auth_response = get_json($auth_response, "polling");
   
-  print "RES: ",$json_auth_response->{success}," STATUS: ",$json_auth_response->{result}->{status}, "\n";
+  print "N: $count STATUS: ",$json_auth_response->{result}->{status}, "\n";
   sleep 2;
 } while ($json_auth_response->{result}->{status} eq 'pending');
 
@@ -40,10 +48,10 @@ my $status = $json_auth_response->{result}->{status};
 print "Final status is '", $status, "'\n";
 
 if ($status eq 'granted') {
-  my $filename = "apptoken";
-  open TOKENFILE, '>', $filename
-    or die "open: $filename: $!";
-  print TOKENFILE "$apptoken\n";
-  close TOKENFILE;
+  print "\nCongratulation ! You have a valid AppToken.\n";
+  print "\nYou can store the AppToken in /etc/munin/plugin-conf.d/fb\n\n";
+  print "  [fb_*]\n  env.FB_AppToken $apptoken\n\n";
+  print "\nThen, you will have to go on the FreeBox web interface to give the 'settings configuration' privileges to that new app token.\n";
 }
 
+exit 0;

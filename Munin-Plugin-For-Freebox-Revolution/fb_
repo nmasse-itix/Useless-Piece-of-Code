@@ -101,7 +101,7 @@ if (defined $arg and $arg eq 'suggest') {
   if (defined $ENV{FB_AppToken}) {
     print "yes\n";
   } else {
-    print "no (Please set the FB_AppToken configuration in /etc/munin/plugin-conf.d/fb !)\n";
+    print "no (Please set the env.FB_AppToken configuration in /etc/munin/plugin-conf.d/fb !)\n";
   }
   exit 0;
 }
@@ -124,18 +124,16 @@ if (defined $arg and $arg eq 'config') {
   exit 0;
 }
 
+my $apptoken = $ENV{'FB_AppToken'};
+die "no app token defined in configuration."
+  unless defined $apptoken;
+
 my $ua = LWP::UserAgent->new;
 
 my $auth_response = $ua->get("http://mafreebox.freebox.fr/api/v1/login/");
 my $json_auth_response = get_json($auth_response, "login");
 my $challenge = $json_auth_response->{result}->{challenge};
 warn "Current challenge is $challenge" if $debug;
-
-my $filename = "apptoken";
-open TOKENFILE, "<", $filename
-  or die "open: $filename: $!";
-my $apptoken = <TOKENFILE>;
-close TOKENFILE;
 
 my $pw = hmac_sha1_hex($challenge, $apptoken);
 warn "Computed password is $pw" if $debug;
