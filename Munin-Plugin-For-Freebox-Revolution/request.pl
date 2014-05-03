@@ -93,6 +93,19 @@ sub get_json {
   return $json;
 }
 
+my $arg = shift;
+if (defined $arg and $arg eq 'suggest') {
+  print "$_\n" foreach keys %graph;
+  exit 0;
+} elsif (defined $arg and $arg eq 'autoconf') {
+  if (defined $ENV{FB_AppToken}) {
+    print "yes\n";
+  } else {
+    print "no (Please set the FB_AppToken configuration in /etc/munin/plugin-conf.d/fb !)\n";
+  }
+  exit 0;
+}
+
 # Determine which graph is asked by munin
 my @mode = grep { $0 =~ m/fb_${_}/ } keys %graph;
 die "please symlink this script with a valid suffix (",(join ",", keys %graph),"). Exemple: fb_net. "
@@ -101,7 +114,6 @@ my $mode = $mode[0];
 warn "mode is $mode" if $debug;
 
 # Print out config when asked to do so
-my $arg = shift;
 my $graph_info = $graph{$mode};
 my @fields = sort map { m/\.info/ ? m/(.*)\./ : () } keys %{$graph_info};
 if (defined $arg and $arg eq 'config') {
