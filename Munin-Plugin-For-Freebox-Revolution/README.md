@@ -26,7 +26,7 @@ cd /usr/local/src/useless/Munin-Plugin-For-Freebox-Revolution
 ./get-app-token
 ```
 
-The script uses the Freebox API to request an AppToken and keeps polling until the request is approved or denied. You have to accept the request on the front LCD display of you Freebox. 
+The script uses the Freebox API to request an AppToken and keeps polling until the request is approved or denied. **You have to accept the request on the front LCD display of your Freebox**. 
 
 You should get the following output: 
 
@@ -57,8 +57,9 @@ As asked, create a new file named "/etc/munin/plugin-conf.d/fb" with the followi
 [fb_*]
 env.FB_AppToken <put your apptoken here>
 ```
-Now, connects to http://mafreebox.freebox.fr, login and go to *Paramètres de la Freebox* > *Gestion des accès* > *Applications*. 
-Edit the new Munin application, remove all privileges and add *Modification des règlages de la Freebox*. Click *OK*.
+
+Now, connect to http://mafreebox.freebox.fr, login and go to *Paramètres de la Freebox* > *Gestion des accès* > *Applications*. 
+Edit the new Munin application and enable *Modification des règlages de la Freebox*. Click *OK*.
 
 ## Register the plugin
 
