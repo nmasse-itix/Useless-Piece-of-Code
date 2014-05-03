@@ -42,6 +42,7 @@ do {
   
   print "N: $count STATUS: ",$json_auth_response->{result}->{status}, "\n";
   sleep 2;
+  $count++;
 } while ($json_auth_response->{result}->{status} eq 'pending');
 
 my $status = $json_auth_response->{result}->{status};
