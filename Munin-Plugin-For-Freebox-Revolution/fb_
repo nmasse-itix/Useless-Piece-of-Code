@@ -156,7 +156,8 @@ $ua->default_header('X-Fbx-App-Auth', $session_token);
 # Do not forget to logout
 END {
   if (defined $session_token) {
-    my $logout_response = $ua->post("http://mafreebox.freebox.fr/api/v1/login/session", Content => encode_json(\%auth_request));
+    warn "Cleaning up" if $debug;
+    my $logout_response = $ua->post("http://mafreebox.freebox.fr/api/v1/login/logout/", Content => encode_json(\%auth_request));
     my $json_logout_response = get_json($auth_response, "session");
   }
 }
