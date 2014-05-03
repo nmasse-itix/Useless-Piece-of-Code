@@ -189,7 +189,7 @@ foreach my $data (@{$json_rrd_response->{result}->{data}}) {
 # Average every result
 while (my ($field, $sum) = each(%sum)) {
   my $average = int($sum / $count);
-  print "${db}_${field}.value $average\n";
+  print "${field}.value $average\n";
 }
 
 exit 0
