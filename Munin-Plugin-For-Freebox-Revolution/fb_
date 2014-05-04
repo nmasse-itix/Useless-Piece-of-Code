@@ -1,4 +1,7 @@
 #!/usr/bin/perl -w
+#%# family=auto
+#%# capabilities=autoconf suggest
+
 
 use LWP::UserAgent;
 use JSON::PP;
@@ -21,11 +24,13 @@ my %graph = (
     #graph_category => 'freebox',
     graph_args => '--base 1000 -l 0',
     graph_scale => 'yes',
+    graph_title => 'Freebox network trafic',
     graph_info => 'The upload and download rate of the Freebox Revolution.',
+    graph_vlabel => 'bytes per second',
     (map { 
       ("$_.info" => ($_ =~ m/^up/ ? "Upstream " : "Downstream ") . ($_ =~ m/rate/ ? "Rate" : "Bandwidth"), 
       "$_.type" => "GAUGE", 
-      "$_.label" => "bytes/s" )
+      "$_.label" => $_)
     } qw/bw_up bw_down rate_up rate_down/),
     '.db' => "net",
   },
@@ -33,13 +38,15 @@ my %graph = (
     #graph_category => 'freebox',
     graph_args => '--base 1000 -0',
     graph_scale => 'no',
+    graph_title => 'Freebox components temperature',
     graph_info => 'The temperature of various sensors on the Freebox Revolution',
+    graph_vlabel => 'temp',
     (map { 
       ("$_.warning" => "70", 
       "$_.critical" => "80",
       "$_.info" => "Temperature of the $_ component",
       "$_.type" => "GAUGE",
-      "$_.label" => "°C" )
+      "$_.label" => "$_" )
     } qw/cpum cpub sw hdd/),
     '.db' => "temp",
   },
@@ -47,11 +54,13 @@ my %graph = (
     #graph_category => 'freebox',
     graph_args => '--base 1000 -0',
     graph_scale => 'no',
+    graph_title => 'Freebox fan speed',
     graph_info => 'The fan speed of the Freebox Revolution',
+    graph_vlabel => 'RPM',
     (map { 
       ("$_.info" => "Fan speed",
       "$_.type" => "GAUGE",
-      "$_.label" => "RPM" )
+      "$_.label" => "speed" )
     } qw/fan_speed/),
     '.db' => "temp",
   },
@@ -59,11 +68,13 @@ my %graph = (
     #graph_category => 'freebox',
     graph_args => '--base 1000 -l 0',
     graph_scale => 'yes',
+    graph_title => 'Freebox xDSL speed',
     graph_info => 'The xDSL rate stats of the Freebox Revolution',
+    graph_vlabel => 'speed',
     (map { 
       ("$_.info" => ($_ =~ m/^up/ ? "Upstream " : "Downstream ") . "Rate", 
       "$_.type" => "GAUGE", 
-      "$_.label" => "kb/s")
+      "$_.label" => ($_ =~ m/^.*_(.*)/))
     } qw/rate_up rate_down/),
     '.db' => "dsl",
   },
@@ -72,10 +83,12 @@ my %graph = (
     graph_args => '--base 1000 -l 0',
     graph_scale => 'no',
     graph_info => 'The xDSL SNR stats of the Freebox Revolution',
+    graph_title => 'Freebox xDSL S/N ratio',
+    graph_vlabel => 'dB',
     (map {
       ("$_.info" => ($_ =~ m/^up/ ? "Upstream " : "Downstream ") . "SNR Ratio", 
       "$_.type" => "GAUGE", 
-      "$_.label" => "dB")
+      "$_.label" => ($_ =~ m/^.*_(.*)/))
     } qw/snr_up snr_down/),
     '.db' => "dsl",
   },
