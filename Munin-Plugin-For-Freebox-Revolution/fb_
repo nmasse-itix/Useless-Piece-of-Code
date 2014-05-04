@@ -21,7 +21,7 @@ my %db_fields = (
 
 my %graph = (
   net => { 
-    #graph_category => 'freebox',
+    graph_category => 'freebox',
     graph_args => '--base 1000 -l 0',
     graph_scale => 'yes',
     graph_title => 'Freebox network trafic',
@@ -30,12 +30,13 @@ my %graph = (
     (map { 
       ("$_.info" => ($_ =~ m/^up/ ? "Upstream " : "Downstream ") . ($_ =~ m/rate/ ? "Rate" : "Bandwidth"), 
       "$_.type" => "GAUGE", 
-      "$_.label" => $_)
+      "$_.label" => $_,
+      ($_ =~ m/down/ ? ("$_.graph" => 'no') : ("$_.negative" => ($_ =~ m/^(.*)_/)[0].'_down' )))
     } qw/bw_up bw_down rate_up rate_down/),
     '.db' => "net",
   },
   temp => {
-    #graph_category => 'freebox',
+    graph_category => 'freebox',
     graph_args => '--base 1000 -0',
     graph_scale => 'no',
     graph_title => 'Freebox components temperature',
@@ -51,7 +52,7 @@ my %graph = (
     '.db' => "temp",
   },
   fan => {
-    #graph_category => 'freebox',
+    graph_category => 'freebox',
     graph_args => '--base 1000 -0',
     graph_scale => 'no',
     graph_title => 'Freebox fan speed',
@@ -65,7 +66,7 @@ my %graph = (
     '.db' => "temp",
   },
   dsl_rate => {
-    #graph_category => 'freebox',
+    graph_category => 'freebox',
     graph_args => '--base 1000 -l 0',
     graph_scale => 'yes',
     graph_title => 'Freebox xDSL speed',
@@ -74,12 +75,13 @@ my %graph = (
     (map { 
       ("$_.info" => ($_ =~ m/^up/ ? "Upstream " : "Downstream ") . "Rate", 
       "$_.type" => "GAUGE", 
-      "$_.label" => ($_ =~ m/^.*_(.*)/))
+      "$_.label" => ($_ =~ m/^.*_(.*)/),
+      ($_ =~ m/down/ ? ("$_.graph" => 'no') : ("$_.negative" => ($_ =~ m/^(.*)_/)[0].'_down' )))
     } qw/rate_up rate_down/),
     '.db' => "dsl",
   },
   dsl_snr => {
-    #graph_category => 'freebox',
+    graph_category => 'freebox',
     graph_args => '--base 1000 -l 0',
     graph_scale => 'no',
     graph_info => 'The xDSL SNR stats of the Freebox Revolution',
