@@ -37,7 +37,7 @@ my %graph = (
   },
   temp => {
     graph_category => 'freebox',
-    graph_args => '--base 1000 -0',
+    graph_args => '--base 1000 -l 0',
     graph_scale => 'no',
     graph_title => 'Freebox components temperature',
     graph_info => 'The temperature of various sensors on the Freebox Revolution',
@@ -53,7 +53,7 @@ my %graph = (
   },
   fan => {
     graph_category => 'freebox',
-    graph_args => '--base 1000 -0',
+    graph_args => '--base 1000 -l 0',
     graph_scale => 'no',
     graph_title => 'Freebox fan speed',
     graph_info => 'The fan speed of the Freebox Revolution',
@@ -84,11 +84,11 @@ my %graph = (
     graph_category => 'freebox',
     graph_args => '--base 1000 -l 0',
     graph_scale => 'no',
-    graph_info => 'The xDSL SNR stats of the Freebox Revolution',
+    graph_info => 'The xDSL Signal/Noise Margin stats of the Freebox Revolution',
     graph_title => 'Freebox xDSL S/N ratio',
     graph_vlabel => 'dB',
     (map {
-      ("$_.info" => ($_ =~ m/^up/ ? "Upstream " : "Downstream ") . "SNR Ratio", 
+      ("$_.info" => ($_ =~ m/^up/ ? "Upstream " : "Downstream ") . "S/N Margin", 
       "$_.type" => "GAUGE", 
       "$_.label" => ($_ =~ m/^.*_(.*)/))
     } qw/snr_up snr_down/),
