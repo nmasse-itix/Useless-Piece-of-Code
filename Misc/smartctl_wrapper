@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo -u root /usr/bin/smartctl "$@"
+
