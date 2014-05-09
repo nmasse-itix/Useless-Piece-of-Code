@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo -u root /usr/bin/smartctl "$@"
+sudo -u root -n /usr/bin/smartctl "$@"
 
